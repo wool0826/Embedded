@@ -1,5 +1,6 @@
 package ac.kr.kgu.esproject;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import android.app.Activity;
@@ -43,7 +44,7 @@ public class ArrayAdderActivity extends Activity {
 	
 	// UI
 	Button createBtn, confirmBtn, clearBtn;
-	TextView elementList, resultTv;
+	TextView elementList, resultTv, resultOfSummationTv;
 	EditText inputValue;
 	Spinner spinner;
 	
@@ -60,13 +61,14 @@ public class ArrayAdderActivity extends Activity {
         dotThread.start();
         segThread.setDaemon(true);
         segThread.start();
-        buzzThread.setDaemon(true);
-        buzzThread.start();
+       // buzzThread.setDaemon(true);
+       // buzzThread.start();
         
         // Initialize DotMatrix
         
         
        // UI       
+        resultOfSummationTv = (TextView) findViewById(R.id.resultOfSummationTv);
         createBtn = (Button) findViewById(R.id.createBtn);
         confirmBtn = (Button) findViewById(R.id.confirmBtn);
         clearBtn = (Button) findViewById(R.id.clearBtn);
@@ -79,6 +81,12 @@ public class ArrayAdderActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+        clearBtn.setVisibility(View.GONE);
+        resultTv.setVisibility(View.GONE);
+        confirmBtn.setVisibility(View.GONE);
+        inputValue.setVisibility(View.GONE);
+        resultOfSummationTv.setVisibility(View.GONE);
+        
         createBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -93,7 +101,13 @@ public class ArrayAdderActivity extends Activity {
 					str.append("element #" + i + " : " + arguments[i-1] + "\n");
 				}
 				
-				elementList.setText(str.toString());				
+				elementList.setText(str.toString());	
+				
+				clearBtn.setVisibility(View.VISIBLE);
+		        
+		        confirmBtn.setVisibility(View.VISIBLE);
+		        inputValue.setVisibility(View.VISIBLE);
+		        resultOfSummationTv.setVisibility(View.VISIBLE);
 			}
 		});
         
@@ -104,42 +118,49 @@ public class ArrayAdderActivity extends Activity {
 							
 				int argValue = Integer.parseInt(value);
 				int result = calculate(arguments, argValue);
-				int pivot = 1;
 				
 				if(result==argValue) isCorrect = true;
 				else isCorrect = false;
 				
-				if(!isCorrect) value += "-" + result;
+				if(!isCorrect) {
+					value += "-" + result;
+					resultTv.setText("That is Wrong.");
+				} else {
+					resultTv.setText("That is Correct.");
+				}
+				resultTv.setVisibility(View.VISIBLE);
+				
 				
 				valueForSegment = "";
 				
 				if(argValue == 0){
 					valueForSegment += Getsegmentcode(0);
 				} else {
-					pivot = 1;
-					
-					while(argValue > pivot * 10){
-						pivot *= 10;
-					}
+					ArrayList<String> vlist = new ArrayList<String>();
 					
 					while(argValue > 0){
-						valueForSegment += Getsegmentcode(argValue / pivot);
-						argValue = argValue % pivot;
-						pivot /= 10;
+						vlist.add(Getsegmentcode(argValue % 10));
+						argValue = argValue / 10;
+					}
+					
+					for(int i=vlist.size()-1; i>=0; i--){
+						valueForSegment += vlist.get(i);
 					}
 				}
 				
 				if(!isCorrect){
 					if(result != 0){
-						pivot = 1;
-						while(result > pivot * 10){
-							pivot *= 10;
-						}
 						valueForSegment += "02";
+						
+						ArrayList<String> vlist = new ArrayList<String>();
+						
 						while(result > 0){
-							valueForSegment += Getsegmentcode(result / pivot);
-							result = result % pivot;
-							pivot /= 10;
+							vlist.add(Getsegmentcode(result % 10));
+							result = result / 10;
+						}
+						
+						for(int i=vlist.size()-1; i>=0; i--){
+							valueForSegment += vlist.get(i);
 						}
 					} else {
 						valueForSegment += "02";
@@ -166,6 +187,12 @@ public class ArrayAdderActivity extends Activity {
 				elementList.setText("");
 				resultTv.setText("");
 				inputValue.setText("");
+				
+				clearBtn.setVisibility(View.GONE);
+		        resultTv.setVisibility(View.GONE);
+		        confirmBtn.setVisibility(View.GONE);
+		        inputValue.setVisibility(View.GONE);
+		        resultOfSummationTv.setVisibility(View.GONE);
 			}
 		});
     }
@@ -175,10 +202,12 @@ public class ArrayAdderActivity extends Activity {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			threadState = INTERRUPT;
 			buzzThread.interrupt();
+			dotThread.interrupt();
+			segThread.interrupt();
 			
 			start = false;
 			restart = false;
-			dotThread.interrupt();
+			
 		}
 		return super.onKeyDown(keyCode, event);
 	}
