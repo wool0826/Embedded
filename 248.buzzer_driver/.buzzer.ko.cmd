@@ -1,0 +1,1 @@
+cmd_/Android/drivers/248.buzzer_driver/buzzer.ko := /usr/local/arm/arm-2010q1/bin/arm-none-eabi-ld -EL -r  -T /Android/linux-2.6.32-hanback/scripts/module-common.lds --build-id -o /Android/drivers/248.buzzer_driver/buzzer.ko /Android/drivers/248.buzzer_driver/buzzer.o /Android/drivers/248.buzzer_driver/buzzer.mod.o
