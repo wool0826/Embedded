@@ -70,8 +70,8 @@ jint Java_ac_kr_kgu_esproject_ArrayAdderActivity_dotMatrixControl( JNIEnv* env, 
 	return 0;
 }
 
-jint
-Java_ac_kr_kgu_esproject_ArrayAdderActivity_segmentControl (JNIEnv* env, jobject thiz, jstring data){
+jint Java_ac_kr_kgu_esproject_ArrayAdderActivity_segmentControl( JNIEnv* env, jobject thiz, jstring data)
+{
 	jboolean iscopy;
 	char* buf;
 	int dev,ret,len;
@@ -92,37 +92,3 @@ Java_ac_kr_kgu_esproject_ArrayAdderActivity_segmentControl (JNIEnv* env, jobject
 
 	return 0;
 }
-
-// jint
-// Java_ac_kr_kgu_esproject_ArrayAdderActivity_segmentControl (JNIEnv* env,
-// 													jobject thiz, jint data )
-// {	
-// 	int dev, ret ;
-// 	dev = open("/dev/segment",O_RDWR | O_SYNC);
-
-// 	if(dev != -1) {
-// 		ret = write(dev,&data,4);
-// 		close(dev);
-// 	} else {
-// 		exit(1);
-// 	}
-// 	return 0;
-// }
-
-jint
-Java_ac_kr_kgu_esproject_ArrayAdderActivity_segmentIOControl (JNIEnv* env,
-													jobject thiz, jint data )
-{
-	int dev, ret ;
-	dev = open("/dev/segment",O_RDWR | O_SYNC);
-
-	if(dev != -1) {
-		ret = ioctl(dev, data, NULL, NULL);
-		close(dev);
-	} else {
-		//__android_log_print(ANDROID_LOG_ERROR, "SegmentActivity", "Device Open ERROR!\n");
-		exit(1);
-	}
-	return 0;
-}
-
