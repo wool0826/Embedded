@@ -1,4 +1,4 @@
-#include <linux/init.h>
+﻿#include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
@@ -115,22 +115,21 @@ ssize_t segment_write(struct file *inode, const char *gdata, size_t length, loff
 	int ret=0, i;
 	char buf[20];
 	unsigned char digit[6]={0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
-	unsigned char result[6] = 0;
+	unsigned char result[6] = { 0, 0, 0, 0, 0, 0 };
+	int num;
 
 	// 사용자 메모리 gdata를 커널 메모리 buf에 length만큼 복사
 	ret = copy_from_user(&buf, gdata, length);
 	if(ret<0) return -1;
 	
 	for (i=0; i<6; i++) {
-		result[i] = htoi(buf[2*i]) * 16 + htoi(buf[2*i + 1]);
+		num = htoi(buf[2*i]) * 16 + htoi(buf[2*i + 1]);
+		result[i] = num;
 		*segment_grid = digit[i];
 		*segment_data = result[i];
 		m_delay(1);
 	}
-	return length;
 
-	*segment_grid = ~digit[0];
-	*segment_data = 0;
 	return length;
 }
 
