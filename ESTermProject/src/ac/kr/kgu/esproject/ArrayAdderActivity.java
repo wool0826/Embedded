@@ -61,11 +61,8 @@ public class ArrayAdderActivity extends Activity {
         dotThread.start();
         segThread.setDaemon(true);
         segThread.start();
-       // buzzThread.setDaemon(true);
-       // buzzThread.start();
-        
-        // Initialize DotMatrix
-        
+        buzzThread.setDaemon(true);
+        buzzThread.start();      
         
        // UI       
         resultOfSummationTv = (TextView) findViewById(R.id.resultOfSummationTv);
@@ -242,13 +239,13 @@ public class ArrayAdderActivity extends Activity {
     	public void run(){
     		while(threadState != INTERRUPT){
     			int data = 0;
-    			if(!isConfirmed){
+    			if(threadState == IDLE){
     				data = 0;
     				buzzerControl(data);
     			} else {
     				if(isCorrect){
     					data = 0;
-    					while(isConfirmed){
+    					while(threadState == PRINT){
     						try {
     							buzzerControl(data);
         						data = (data == 0) ? 1 : 0;
