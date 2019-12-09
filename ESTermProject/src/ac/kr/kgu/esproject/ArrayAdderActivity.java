@@ -62,7 +62,10 @@ public class ArrayAdderActivity extends Activity {
         segThread.setDaemon(true);
         segThread.start();
         buzzThread.setDaemon(true);
-        buzzThread.start();      
+        buzzThread.start();
+        
+        // Initialize DotMatrix
+        
         
        // UI       
         resultOfSummationTv = (TextView) findViewById(R.id.resultOfSummationTv);
@@ -113,6 +116,12 @@ public class ArrayAdderActivity extends Activity {
 			public void onClick(View v) {
 				value = inputValue.getText().toString();
 							
+				if(!value.matches("[0-9]+")){
+					resultTv.setText("Invalid Input.");
+					resultTv.setVisibility(View.VISIBLE);
+					return;
+				}
+				
 				int argValue = Integer.parseInt(value);
 				int result = calculate(arguments, argValue);
 				
@@ -272,7 +281,7 @@ public class ArrayAdderActivity extends Activity {
 		    	    		for(int j=0; j<20; j++){
 		    	    			dotMatrixControl(Constants.dotCircle[i]);
 		    	    		}
-		    	    		sleep(50);
+		    	    		//sleep(100);
 		    	    	}		    	    	
 	    			} catch(Exception e){
 	    			
@@ -287,13 +296,13 @@ public class ArrayAdderActivity extends Activity {
 			    	    	}
 		    				try{
 		    					dotMatrixControl("00000000000000000000");
-		    					sleep(100);
+		    					sleep(500);
 		    				} catch(Exception e){
 		    					
 		    				}
 	    				}	
 	        			
-	        			int i, j, ch;
+	        			int i, j, k, ch;
 	        			char buf[] = new char[100];
 	
 	        			
@@ -333,44 +342,37 @@ public class ArrayAdderActivity extends Activity {
 	        			
 	        			result += "00000000000000000000";
 	        	
-	        			
-	        			// 33
-	        			
-	        			// print
-	        			for (i = 0; i < (result.length() - 18) / 2; i++) {
-	        			
-	        				for (j = 0; j < 15; j++) {
-	        			
-	        					if (threadState == IDLE) {
-	        						break; 
-	        					} else {
-	        						dotMatrixControl(result.substring(2 * i,
-	        								2 * i + 20));
-	        					}
-	        				}
+	        			while(threadState == PRINT){
+		        			for (i = 0; i < (result.length() - 18) / 2; i++) {
+		        			
+		        				for (j = 0; j < 15; j++) {
+		        			
+		        					if (threadState == IDLE) {
+		        						break; 
+		        					} else {
+		        						dotMatrixControl(result.substring(2 * i,
+		        								2 * i + 20));
+		        					}
+		        				}
+		        			}
+		        			
+		        			for(k=0; k<3 && threadState == PRINT; k++){
+			    				for(i=0; i<20 && threadState == PRINT; i++){
+				    	    		dotMatrixControl(Constants.DotCircleAll);
+				    	    	}
+			    				try{
+			    					dotMatrixControl("00000000000000000000");
+			    					sleep(500);
+			    				} catch(Exception e){
+			    					
+			    				}
+		    				}
 	        			}
 	        			
-	        			//33
-	        		}
-	        		
-	        		for(int k=0; k<3 && threadState == PRINT; k++){
-	    				for(int i=0; i<20 && threadState == PRINT; i++){
-		    	    		dotMatrixControl(Constants.DotCircleAll);
-		    	    	}
-	    				try{
-	    					dotMatrixControl("00000000000000000000");
-	    					sleep(100);
-	    				} catch(Exception e){
-	    					
-	    				}
-    				}	
-	        		
-	        		try{
-		        		dotMatrixControl("00000000000000000000");
-		        		sleep(100);
-	        		} catch(Exception e){
 	        			
 	        		}
+	        		
+	        		
 	        	}
     		}
     	}
@@ -384,8 +386,8 @@ public class ArrayAdderActivity extends Activity {
     						for(int j=0; j<10 && threadState == IDLE; j++){
     							segmentControl(Constants.circleSelect[i]);
     						}
-    					}
-    					sleep(50);
+    						sleep(100);
+    					}    					
     				} catch(Exception e){
     				}
     			} else {
@@ -394,7 +396,8 @@ public class ArrayAdderActivity extends Activity {
     						for(int j=0; j<10 && threadState == PRINT; j++){
     							segmentControl(Constants.circle);
     						}
-    						sleep(100);
+    						segmentControl("000000000000");
+    						sleep(500);
     					}
     					
     				
@@ -404,26 +407,24 @@ public class ArrayAdderActivity extends Activity {
     					
     					result += "000000000000";
     					
-    					for(int i=0; i<result.length()-12 && threadState == PRINT; i+=2){
-    						String t = result.substring(i, i+12);
+    					while(threadState == PRINT){
     						
-    						for(int j=0; j<10 && threadState == PRINT; j++){
-    							segmentControl(t);
-    						}
-    					}
-    					
-    					for(int i=0; i<3 && threadState == PRINT; i++){
-    						for(int j=0; j<10 && threadState == PRINT; j++){
-    							segmentControl(Constants.circle);
-    						}
-    						sleep(100);
-    					}
-    					
-    					try{
-    						segmentControl("000000000000");
-    						sleep(100);
-    					}catch(Exception e){
-    						
+	    					for(int i=0; i<result.length()-12 && threadState == PRINT; i+=2){
+	    						String t = result.substring(i, i+12);
+	    						
+	    						for(int j=0; j<10 && threadState == PRINT; j++){
+	    							segmentControl(t);
+	    						}
+	    					}
+	    					
+	    					for(int i=0; i<3 && threadState == PRINT; i++){
+	    						for(int j=0; j<10 && threadState == PRINT; j++){
+	    							segmentControl(Constants.circle);
+	    						}
+	    						segmentControl("000000000000");
+	    						sleep(500);
+	    					}
+	    					
     					}
     				} catch(Exception e){
     					
